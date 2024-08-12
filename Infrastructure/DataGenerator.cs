@@ -25,7 +25,9 @@ public static class DataGenerator
 				new Product(4, "Headache Pills", "packet of headache pills", 3, Convert.ToDecimal(9.75), false),
 				new Product(5, "Music CD", "Music CD", 4, Convert.ToDecimal(14.99), false),
 				new Product(6, "Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(47.50), true),
-				new Product(7, "Perfume", "bottle of perfume", 5, Convert.ToDecimal(18.99), false)
+				new Product(7, "Perfume", "bottle of perfume", 5, Convert.ToDecimal(18.99), false),
+				new Product(8, "Imported Chocolates", "box of imported chocolates", 2, Convert.ToDecimal(11.25), true),
+				new Product(9, "Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(27.99), true)
 			);
 
 		context.SaveChanges();

@@ -21,6 +21,11 @@ namespace IntegrationTest.Infrastructure
 			_fixture = integrationTestFixture;
 			_jsonHelper = integrationTestFixture._jsonHelper;
 
+			RecreateInMemoryDatabase();
+		}
+
+		protected void RecreateInMemoryDatabase()
+		{
 			if (DbContext != null)
 			{
 				DbContext.Database.EnsureDeleted();

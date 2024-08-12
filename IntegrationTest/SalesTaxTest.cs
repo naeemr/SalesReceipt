@@ -63,7 +63,7 @@ namespace IntegrationTest
 			};
 
 			//Act
-			var requestBuilder = NewRequest.AddRoute("api/sales/printreceipt");
+			var requestBuilder = NewRequest.AddRoute("sales/printreceipt");
 
 			var response = await requestBuilder.Post(items);
 
@@ -87,14 +87,14 @@ namespace IntegrationTest
 			//Setup        
 			List<CartItem> items = new List<CartItem>()
 			{
-				new CartItem{ProductId =3,  Quantity = 1},
+				new CartItem{ProductId =8,  Quantity = 1},
 				new CartItem{ProductId =4,  Quantity = 1},
 				new CartItem{ProductId =7,  Quantity = 1},
-				new CartItem{ProductId =6,  Quantity = 1}
+				new CartItem{ProductId =9,  Quantity = 1}
 			};
 
 			//Act
-			var requestBuilder = NewRequest.AddRoute("api/sales/printreceipt");
+			var requestBuilder = NewRequest.AddRoute("sales/printreceipt");
 
 			var response = await requestBuilder.Post(items);
 

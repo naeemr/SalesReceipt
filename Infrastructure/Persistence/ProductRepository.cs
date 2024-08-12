@@ -16,7 +16,9 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
 
 	public async Task<IEnumerable<Product>> GetProducts(IEnumerable<int> productIds)
 	{
-		return await _context.Products.Include(p => p.ProductCategory)
-			.Where(p => productIds.Contains(p.Id)).ToListAsync();
+		var data = await _context.Products.Include(p => p.ProductCategory)
+			.Where(p => productIds.Contains(p.Id)).AsNoTracking().ToListAsync();
+
+		return data;
 	}
 }
