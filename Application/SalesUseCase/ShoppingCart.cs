@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Interfaces;
+using Application.Interfaces;
 using Application.Sales.Request;
 using Application.Sales.Response;
 using Domain;
@@ -14,18 +15,26 @@ public class ShoppingCart : IShoppingCart
 {
 	private readonly IProductRepository _productRepository;
 	private readonly ReceiptService _receiptService;
+	private readonly IAppLogger<ShoppingCart> _appLogger;
 
-	public ShoppingCart(IProductRepository productRepository, ReceiptService receiptService)
+	public ShoppingCart(IProductRepository productRepository,
+		ReceiptService receiptService,
+		IAppLogger<ShoppingCart> appLogger)
 	{
 		_productRepository = productRepository;
 		_receiptService = receiptService;
+		_appLogger = appLogger;
 	}
 
 	public async Task<PrintReceipt> PrintReceipt(IEnumerable<CartItem> cartItems)
 	{
-		var productIds = cartItems.Select(p => p.ProductId).ToList();
+		var productIds = cartItems.Select(p => p.ProductId).Distinct().ToList();
+
+		_appLogger.AddTrace(default, "ProductIds are {0}", productIds);
 
 		var products = await _productRepository.GetProducts(productIds);
+
+		_appLogger.AddInfo(default, "Total Product found {0}", products?.Count());
 
 		List<(Product, int)> productList = new List<(Product, int)>();
 
@@ -53,6 +62,8 @@ public class ShoppingCart : IShoppingCart
 
 			printReceipt.ReceiptItems.AddRange(receipt.ReceiptItems.Select(s => s.ToString()).ToList());
 		}
+
+		_appLogger.AddTrace(printReceipt, "Receipt is");
 
 		return printReceipt;
 	}

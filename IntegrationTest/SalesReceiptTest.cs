@@ -5,17 +5,18 @@ using FluentAssertions;
 using IntegrationTest.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace IntegrationTest
 {
-	public class SalesTaxTest : IntegrationTestBase
+	public class SalesReceiptTest : IntegrationTestBase
 	{
 		private readonly ITestOutputHelper _output;
 
-		public SalesTaxTest(IntegrationTestFixture integrationTestFixture,
+		public SalesReceiptTest(IntegrationTestFixture integrationTestFixture,
 			ITestOutputHelper output)
 			: base(integrationTestFixture, output)
 		{

@@ -1,38 +1,44 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Application.Common.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Net;
 using System.Threading.Tasks;
-using System;
-using Application.Common.Interfaces;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.Data.SqlClient;
 
 namespace Service.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {
 	private readonly RequestDelegate _next;
-	private readonly IAppLogger<ExceptionHandlingMiddleware> _logger;
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IJsonHelper _jsonHelper;
+	private IAppLogger<ExceptionHandlingMiddleware> _logger;
 
-	public ExceptionHandlingMiddleware(RequestDelegate next, 
-		IAppLogger<ExceptionHandlingMiddleware> logger, 
+	public ExceptionHandlingMiddleware(RequestDelegate next,
+		IServiceProvider serviceProvider, 
 		IJsonHelper jsonHelper)
 	{
 		_next = next;
-		_logger = logger;
+		_serviceProvider = serviceProvider;
 		_jsonHelper = jsonHelper;
 	}
 
 	public async Task InvokeAsync(HttpContext context)
 	{
-		try
+		using (var scope = _serviceProvider.CreateScope())
 		{
-			await _next(context);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "An unhandled exception has occurred.");
-			await HandleExceptionAsync(context, ex);
+			_logger = scope.ServiceProvider.GetRequiredService<IAppLogger<ExceptionHandlingMiddleware>>();
+
+			try
+			{
+				await _next(context);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "An unhandled exception occurred.");
+				await HandleExceptionAsync(context, ex).ConfigureAwait(false);
+			}
 		}
 	}
 

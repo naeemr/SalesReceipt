@@ -67,6 +67,7 @@ namespace IntegrationTest.Infrastructure
 
 		public async Task<HttpResponseMessage> Post<T>(T content, bool throwOnError = true) where T : class
 		{
+			_httpClient.DefaultRequestHeaders.Add("TransactionId", Guid.NewGuid().ToString());
 			var response = await _httpClient.PostAsync(BuildUrl(), ToStringContent(content));
 			if (throwOnError) ThrowIfError(response);
 			return response;

@@ -1,4 +1,6 @@
-﻿using Application.Common.Model;
+﻿using Application.Common.Interfaces;
+using Application.Common.Model;
+using Application.Sales;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -7,8 +9,16 @@ namespace Service.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class ApiControllerBase : ControllerBase
+public class ApiControllerBase<T> : ControllerBase
 {
+	protected readonly IAppLogger<T> _appLogger;
+	protected string transactionId = default;
+
+	public ApiControllerBase(IAppLogger<T> appLogger)
+	{
+		_appLogger = appLogger;
+	}
+
 	public override OkObjectResult Ok([ActionResultObjectValue] object value)
 	{
 		ApiResponse<object> response = new();
@@ -44,5 +54,11 @@ public class ApiControllerBase : ControllerBase
 		response.Success = false;
 
 		return base.Conflict(response);
+	}
+
+	protected void ReadHeaderValue()
+	{
+		if (Request.Headers.ContainsKey("TransactionId"))
+			transactionId = Request.Headers["TransactionId"];
 	}
 }
