@@ -1,17 +1,80 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Application.Common.Extensions;
+using Application.Common.Interfaces;
+using Application.Common.Model;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace Infrastructure;
 
-public class Logger<T> : Application.Common.Interfaces.ILogger<T> where T : class
+public class AppLogger<T> : IAppLogger<T> where T : class
 {
 	private readonly ILogger<T> _logger;
-	private readonly Application.Common.Interfaces.IJsonHelper _jsonHelper;
+	private readonly IJsonHelper _jsonHelper;
 
-	public Logger(Microsoft.Extensions.Logging.ILogger<T> logger, Application.Common.Interfaces.IJsonHelper jsonHelper)
+	//Logger log = LogManager.GetCurrentClassLogger();
+
+	private List<ApiError> messages = new List<ApiError>();
+
+	public AppLogger(ILogger<T> logger,
+		IJsonHelper jsonHelper)
 	{
 		_logger = logger;
 		_jsonHelper = jsonHelper;
+	}
+
+	public void AddWarning(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Warning, message, data));
+	}
+
+	public void AddDebug(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Debug, message, data));
+	}
+
+	public void AddInfo(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Information, message, data));
+	}
+
+	public void AddTrace(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Trace, message, data));
+	}
+
+	public void AddError(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Error, message, data));
+	}
+
+	public void AddFatal(object data, string message, params object[] args)
+	{
+		message = message.FormatString(args);
+		messages.Add(new ApiError(LogLevel.Critical, message, data));
+	}
+
+	public void LogAllMessages()
+	{
+		foreach (var message in messages)
+		{
+			var json = message.Data != null ?
+				_jsonHelper.SerializeFormattedObject(message.Data) : default;
+
+			if (string.IsNullOrEmpty(json))
+			{
+				_logger.Log(message.LogLevel, message.Message);
+			}
+			else
+			{
+				_logger.Log(message.LogLevel, message.Message, json);
+			}
+		}
 	}
 
 	/// <summary>

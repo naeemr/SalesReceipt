@@ -1,4 +1,5 @@
 using Application;
+using Application.Common.Interfaces;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Builder;
@@ -7,81 +8,91 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Service.Middlewares;
+using System.Linq;
 
-namespace Service
+namespace Service;
+
+public class Startup
 {
-	public class Startup
+	public Startup(IConfiguration configuration)
 	{
-		public Startup(IConfiguration configuration)
+		Configuration = configuration;
+	}
+
+	public IConfiguration Configuration { get; }
+
+	public void ConfigureServices(IServiceCollection services)
+	{
+		services.AddApplication();
+
+		services.AddInfrastructure();
+
+		services.AddPersistence();
+
+		services.AddControllers();
+
+		services.AddSwaggerGen(c =>
 		{
-			Configuration = configuration;
-		}
-
-		public IConfiguration Configuration { get; }
-
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddApplication();
-
-			services.AddInfrastructure();
-
-			services.AddPersistence();
-
-			services.AddControllers();
-
-			services.AddSwaggerGen(c =>
+			c.SwaggerDoc("v1", new OpenApiInfo
 			{
-				c.SwaggerDoc("v1", new OpenApiInfo
-				{
-					Title = "Services",
-					Version = "v1"
-				});
+				Title = "Services",
+				Version = "v1"
 			});
+		});
+	}
+
+	public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+	{
+		if (env.IsDevelopment())
+		{
+			//app.UseDeveloperExceptionPage();
+
+			app.UseSwagger();
+			app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
+				"Services v1"));
+
+			CreateInMemoryDB(app);
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+		//app.UseHttpsRedirection();
+		app.UseRouting();
+
+		// global cors policy
+		app.UseCors(x => x
+			.AllowAnyMethod()
+			.AllowAnyHeader()
+			.AllowAnyOrigin());
+
+		app.UseEndpoints(endpoints =>
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-				app.UseSwagger();
-				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
-					"Services v1"));
+			endpoints.MapControllers();
+		});
+	}
 
-				CreateInMemoryDB(app);
-			}
-			else
-			{
-				app.UseExceptionHandler("/error");
-			}
+	private void LogAppConfiguration(IWebHostEnvironment env, IAppLogger<Startup> _loggrer)
+	{
+		var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+			.AddJsonFile($"appsettings.{env.EnvironmentName}.json");
 
-			//app.UseHttpsRedirection();
-			app.UseRouting();
+		var keys = builder.Build().AsEnumerable().ToList();
 
-			// global cors policy
-			app.UseCors(x => x
-				.AllowAnyMethod()
-				.AllowAnyHeader()
-				.AllowAnyOrigin());
+		_loggrer.LogInfo("Following are the system configuration: {0}", keys);
+	}
 
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllers();
-			});
-		}
-
-		private void CreateInMemoryDB(IApplicationBuilder appBuilder)
+	private void CreateInMemoryDB(IApplicationBuilder appBuilder)
+	{
+		using (var scope = appBuilder.ApplicationServices.CreateScope())
 		{
-			using (var scope = appBuilder.ApplicationServices.CreateScope())
-			{
-				var services = scope.ServiceProvider;
-				var context = services.GetRequiredService<ApplicationDbContext>();
+			var services = scope.ServiceProvider;
+			var context = services.GetRequiredService<ApplicationDbContext>();
 
-				context.Database.EnsureDeleted();
-				context.Database.EnsureCreated();
+			context.Database.EnsureDeleted();
+			context.Database.EnsureCreated();
 
-				context.CreateData();
-			}
+			context.CreateData();
 		}
 	}
 }

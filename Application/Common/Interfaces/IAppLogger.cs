@@ -2,7 +2,7 @@
 
 namespace Application.Common.Interfaces
 {
-	public interface ILogger<T>
+	public interface IAppLogger<T>
 	{
 		/// <summary>
 		/// Log Debug message
