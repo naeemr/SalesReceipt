@@ -6,6 +6,8 @@ namespace Infrastructure;
 
 public static class DataGenerator
 {
+	private static bool isDataLoaded = false;
+
 	public static void CreateData(this ApplicationDbContext context)
 	{
 		context.AddRange(
@@ -31,5 +33,12 @@ public static class DataGenerator
 			);
 
 		context.SaveChanges();
+
+		isDataLoaded = true;
+	}
+
+	public static bool CheckDataLoaded(this ApplicationDbContext context)
+	{
+		return isDataLoaded;
 	}
 }

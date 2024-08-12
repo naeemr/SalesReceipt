@@ -26,7 +26,7 @@ namespace IntegrationTest.Infrastructure
 
 		protected void RecreateInMemoryDatabase()
 		{
-			if (DbContext != null)
+			if (DbContext != null && !DbContext.CheckDataLoaded())
 			{
 				DbContext.Database.EnsureDeleted();
 				DbContext.Database.EnsureCreated();
