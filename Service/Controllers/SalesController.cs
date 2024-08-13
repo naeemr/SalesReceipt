@@ -2,7 +2,6 @@
 using Application.Common.Model;
 using Application.Sales;
 using Application.Sales.Request;
-using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -34,7 +33,7 @@ public class SalesController : ApiControllerBase<ShoppingCart>
 			return BadRequest(new ApiError("Cart cannot be empty."));
 		}
 
-		_appLogger.AddInfo(default, "Receipt printing is started.");
+		_appLogger.AddInfo("Receipt printing is started.", default);
 
 		var receipt = await _shoppingCart.PrintReceipt(cartItems);
 

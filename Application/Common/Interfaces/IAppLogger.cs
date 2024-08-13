@@ -4,20 +4,19 @@ namespace Application.Common.Interfaces
 {
 	public interface IAppLogger<T>
 	{
-
 		void SetTransactionId(string transactionId);
 
-		void AddWarning(object data, string message, params object[] args);
+		void AddWarning(string message, object data, params object[] args);
 
-		void AddDebug(object data, string message, params object[] args);
+		void AddDebug(string message, object data, params object[] args);
 
-		void AddInfo(object data, string message, params object[] args);
+		void AddInfo(string message, object data, params object[] args);
 
-		void AddTrace(object data, string message, params object[] args);
+		void AddTrace(string message, object data, params object[] args);
 
-		void AddError(object data, string message, params object[] args);
+		void AddError(string message, object data, params object[] args);
 
-		void AddFatal(object data, string message, params object[] args);
+		void AddFatal(string message, object data, params object[] args);
 
 		void LogAllMessages();
 

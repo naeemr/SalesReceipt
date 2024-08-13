@@ -30,11 +30,11 @@ public class ShoppingCart : IShoppingCart
 	{
 		var productIds = cartItems.Select(p => p.ProductId).Distinct().ToList();
 
-		_appLogger.AddTrace(default, "ProductIds are {0}", productIds);
+		_appLogger.AddTrace("ProductIds are {0}", default, string.Join(',', productIds.Select(s => s)));
 
 		var products = await _productRepository.GetProducts(productIds);
 
-		_appLogger.AddInfo(default, "Total Product found {0}", products?.Count());
+		_appLogger.AddInfo("Total Product found {0}", default, products?.Count());
 
 		List<(Product, int)> productList = new List<(Product, int)>();
 
@@ -63,7 +63,7 @@ public class ShoppingCart : IShoppingCart
 			printReceipt.ReceiptItems.AddRange(receipt.ReceiptItems.Select(s => s.ToString()).ToList());
 		}
 
-		_appLogger.AddTrace(printReceipt, "Receipt is");
+		_appLogger.AddTrace("Receipt is {JsonData}", printReceipt);
 
 		return printReceipt;
 	}

@@ -38,37 +38,37 @@ public class AppLogger<T> : IAppLogger<T> where T : class
 		TransactionId = transactionId;
 	}
 
-	public void AddWarning(object data, string message, params object[] args)
+	public void AddWarning(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Warning, message, data));
 	}
 
-	public void AddDebug(object data, string message, params object[] args)
+	public void AddDebug(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Debug, message, data));
 	}
 
-	public void AddInfo(object data, string message, params object[] args)
+	public void AddInfo(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Information, message, data));
 	}
 
-	public void AddTrace(object data, string message, params object[] args)
+	public void AddTrace(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Trace, message, data));
 	}
 
-	public void AddError(object data, string message, params object[] args)
+	public void AddError(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Error, message, data));
 	}
 
-	public void AddFatal(object data, string message, params object[] args)
+	public void AddFatal(string message, object data, params object[] args)
 	{
 		message = message.FormatString(args);
 		Messages.Add(new ApiError(LogLevel.Critical, message, data));
@@ -83,20 +83,28 @@ public class AppLogger<T> : IAppLogger<T> where T : class
 		{
 			using (_logger.BeginScope(TransactionId))
 			{
+				_logger.LogDebug("{TransactionId} | The logs writing is started for the transaction.", TransactionId);
+
 				foreach (var message in Messages)
 				{
 					var json = message.Data != null ?
 						_jsonHelper.SerializeFormattedObject(message.Data) : default;
 
+					string messageText = message.Message;
+
+					messageText = !string.IsNullOrEmpty(messageText) ? "{TransactionId} | " + messageText : " {TransactionId} |";
+
 					if (string.IsNullOrEmpty(json))
 					{
-						_logger.Log(message.LogLevel, message.Message);
+						_logger.Log(message.LogLevel, messageText, TransactionId);
 					}
 					else
 					{
-						_logger.Log(message.LogLevel, message.Message, json);
+						_logger.Log(message.LogLevel, messageText, TransactionId, json);
 					}
 				}
+
+				_logger.LogDebug("{TransactionId} The logs writing is ended for the transaction.", TransactionId);
 			}
 		}
 		catch (Exception)
