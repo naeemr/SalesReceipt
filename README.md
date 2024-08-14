@@ -1,1 +1,1 @@
-##Print Sales Receipt - Clean Architecture
+# Print Sales Receipt - Clean Architecture
