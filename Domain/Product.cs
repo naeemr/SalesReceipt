@@ -1,4 +1,6 @@
 ﻿using Domain.Base;
+using Domain.ValueObjects;
+using System.Collections.Generic;
 
 namespace Domain;
 
@@ -10,6 +12,7 @@ public partial class Product : BaseEntity, IAggregateRoot
 	public decimal Price { get; private set; }
 	public bool IsImported { get; private set; } //true if product is imported and local manufactured.
 	public virtual ProductCategory ProductCategory { get; private set; }
+	public virtual ICollection<ReceiptItem> ReceiptItems { get; private set; }
 
 	private Product() { }
 
@@ -28,14 +31,9 @@ public partial class Product : BaseEntity, IAggregateRoot
 	}
 
 	/// <summary>
-	/// This will be auto-generated in the database, but it is included as a constructor parameter 
-	/// to facilitate the creation of in-memory data.
+	/// This will be auto-generated in the database, but it is included as a 
+	/// constructor parameter to facilitate the creation of in-memory data.
 	/// </summary>
-	/// <param name="id"></param>
-	/// <param name="name"></param>
-	/// <param name="productCategoryId"></param>
-	/// <param name="price"></param>
-	/// <param name="isImported"></param>
 	public Product(int id,
 		string name,
 		string description,
@@ -48,6 +46,23 @@ public partial class Product : BaseEntity, IAggregateRoot
 		Price = price;
 		IsImported = isImported;
 		ProductCategoryId = productCategoryId;
+	}
+
+	public SalesTax CalculateTotalTax(decimal basicTax, decimal importDutyTax)
+	{
+		decimal taxRate = 0;
+
+		if (!IsTaxExempt)
+		{
+			taxRate += basicTax;
+		}
+
+		if (IsImported)
+		{
+			taxRate += importDutyTax;
+		}
+
+		return SalesTax.Calculate(taxRate, Price);
 	}
 }
 

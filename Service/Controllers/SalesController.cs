@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Service.Controllers;
 
-public class SalesController : ApiControllerBase<ShoppingCart>
+public class SalesController : ApiControllerBase
 {
-	private readonly IShoppingCart _shoppingCart;
+	private readonly ISalesReceiptUseCase _salesReceipt;
 
-	public SalesController(IShoppingCart shoppingCart,
-		IAppLogger<ShoppingCart> appLogger) : base(appLogger)
+	public SalesController(ISalesReceiptUseCase salesReceipt,
+		IAppLogger appLogger) : base(appLogger)
 	{
-		_shoppingCart = shoppingCart;
+		_salesReceipt = salesReceipt;
 	}
 
 	[HttpPost]
@@ -26,24 +26,41 @@ public class SalesController : ApiControllerBase<ShoppingCart>
 	public async Task<IActionResult> PrintReceipt(IEnumerable<CartItem> cartItems)
 	{
 		ReadHeaderValue();
-		_appLogger.SetTransactionId(transactionId);
+
+		_appLogger.CreateLogger<SalesReceiptUseCase>(TransactionId);
+
+		_appLogger.AddInfo("Receipt printing is started.");
 
 		if (cartItems == null || cartItems.Count() == 0)
 		{
-			return BadRequest(new ApiError("Cart cannot be empty."));
+			var message = "Cart Item list is empty.";
+
+			_appLogger.AddWarning(message);
+			_appLogger.AddInfo("Receipt printing is completed.");
+			_appLogger.SendAllLogEvents();
+
+			return InvalidRequest(new ApiError(StatusCodes.Status400BadRequest.ToString(), message));
 		}
 
-		_appLogger.AddInfo("Receipt printing is started.", default);
-
-		var receipt = await _shoppingCart.PrintReceipt(cartItems);
+		var receipt = await _salesReceipt.PrintReceipt(cartItems);
 
 		if (receipt == null || receipt.ReceiptItems.Count() == 0)
 		{
-			return BadRequest(new ApiError("Receipt is not generated."));
+			var message = "Receipt is not generated.";
+
+			_appLogger.AddWarning(message);
+			_appLogger.AddInfo("Receipt printing is completed.");
+			_appLogger.SendAllLogEvents();
+
+			return InvalidRequest(new ApiError(StatusCodes.Status400BadRequest.ToString(), message));
 		}
 
-		_appLogger.LogAllMessages();
+		_appLogger.AddTrace("Receipt is {JsonData}", receipt);
 
-		return Ok(receipt);
+		_appLogger.AddInfo("Receipt printing is completed.");
+
+		_appLogger.SendAllLogEvents();
+
+		return Success(receipt);
 	}
 }

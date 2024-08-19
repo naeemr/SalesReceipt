@@ -1,57 +1,60 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Model;
-using Application.Sales;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Service.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class ApiControllerBase<T> : ControllerBase
+public class ApiControllerBase : ControllerBase
 {
-	protected readonly IAppLogger<T> _appLogger;
-	protected string transactionId = default;
+	protected readonly IAppLogger _appLogger;
+	protected string TransactionId { get; set; }
 
-	public ApiControllerBase(IAppLogger<T> appLogger)
+	public ApiControllerBase(IAppLogger appLogger)
 	{
 		_appLogger = appLogger;
 	}
 
-	public override OkObjectResult Ok([ActionResultObjectValue] object value)
+	protected IActionResult Success([ActionResultObjectValue] object value)
 	{
-		ApiResponse<object> response = new();
-
-		response.Result = value;
-
-		response.StatusCode = StatusCodes.Status200OK;
+		ApiResponse<object> response = new(value);
 
 		return base.Ok(response);
 	}
 
-	public override BadRequestObjectResult BadRequest([ActionResultObjectValue] object error)
+	protected IActionResult InvalidRequest([ActionResultObjectValue] object value)
 	{
+
 		ApiResponse<object> response = new();
 
-		response.Error = (ApiError)error;
+		if (IsList(value))
+		{
+			foreach (var error in (List<ApiError>)value)
+			{
+				response.AddError(error);
+			}
 
-		response.StatusCode = StatusCodes.Status400BadRequest;
+			return base.BadRequest(response);
+		}
 
-		response.Success = false;
+		var apiError = (ApiError)value;
+
+		response.AddError(apiError);
 
 		return base.BadRequest(response);
 	}
 
-	public override ConflictObjectResult Conflict([ActionResultObjectValue] object error)
+	protected IActionResult ConcurrencyError([ActionResultObjectValue] object value)
 	{
 		ApiResponse<object> response = new();
 
-		response.Error = (ApiError)error;
+		var error = (ApiError)value;
 
-		response.StatusCode = StatusCodes.Status409Conflict;
-
-		response.Success = false;
+		response.AddError(error);
 
 		return base.Conflict(response);
 	}
@@ -59,6 +62,15 @@ public class ApiControllerBase<T> : ControllerBase
 	protected void ReadHeaderValue()
 	{
 		if (Request.Headers.ContainsKey("TransactionId"))
-			transactionId = Request.Headers["TransactionId"];
+			TransactionId = Request.Headers["TransactionId"];
+	}
+
+	private bool IsList(object value)
+	{
+		if (value == null) return false;
+
+		return value is IList &&
+			   value.GetType().IsGenericType &&
+			   value.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(List<>));
 	}
 }

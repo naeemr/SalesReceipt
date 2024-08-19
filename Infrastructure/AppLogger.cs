@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Infrastructure;
 
-public class AppLogger<T> : IAppLogger<T> where T : class
+public class AppLogger : IAppLogger
 {
 	/// <summary>
 	/// Trace = 0, Debug = 1, Information = 2, Warning = 3, Error = 4, Critical = 5, and None = 6.
@@ -18,72 +18,141 @@ public class AppLogger<T> : IAppLogger<T> where T : class
 	/// </summary>
 
 	public string TransactionId { get; private set; }
-	private readonly ILogger<T> _logger;
+	public ILogger Logger { get; private set; }
+	private readonly ILoggerFactory _factory;
 	private readonly IJsonHelper _jsonHelper;
 
-	//Logger log = LogManager.GetCurrentClassLogger();
+	public List<LogEvent> Messages { get; private set; }
 
-	public List<ApiError> Messages { get; private set; }
-
-	public AppLogger(ILogger<T> logger,
+	public AppLogger(ILoggerFactory factory,
 		IJsonHelper jsonHelper)
 	{
-		_logger = logger;
+		_factory = factory;
 		_jsonHelper = jsonHelper;
-		Messages = new List<ApiError>();
+		Messages = new List<LogEvent>();
 	}
 
-	public void SetTransactionId(string transactionId)
+	public void CreateLogger<T>(string transactionId = "") where T : class
 	{
-		TransactionId = transactionId;
+		Logger = _factory.CreateLogger<T>();
+
+		TransactionId = string.IsNullOrEmpty(transactionId)
+			? Guid.NewGuid().ToString() : transactionId;
 	}
 
-	public void AddWarning(string message, object data, params object[] args)
+	public void AddWarning(string message, params object[] args)
 	{
+		if (!Logger.IsEnabled(LogLevel.Warning)) return;
+
 		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Warning, message, data));
+		Messages.Add(new LogEvent(LogLevel.Warning, message));
+
 	}
 
-	public void AddDebug(string message, object data, params object[] args)
+	public void AddWarning<T>(string message, T data) where T : class
 	{
+		if (!Logger.IsEnabled(LogLevel.Warning)) return;
+
+		Messages.Add(new LogEvent(LogLevel.Warning, message, data));
+	}
+
+	public void AddDebug(string message, params object[] args)
+	{
+		if (!Logger.IsEnabled(LogLevel.Debug)) return;
+
 		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Debug, message, data));
+		Messages.Add(new LogEvent(LogLevel.Debug, message));
 	}
 
-	public void AddInfo(string message, object data, params object[] args)
+	public void AddDebug<T>(string message, T data) where T : class
 	{
+		if (!Logger.IsEnabled(LogLevel.Debug)) return;
+
+		Messages.Add(new LogEvent(LogLevel.Debug, message, data));
+	}
+
+	public void AddInfo(string message, params object[] args)
+	{
+		if (!Logger.IsEnabled(LogLevel.Information)) return;
+
 		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Information, message, data));
+		Messages.Add(new LogEvent(LogLevel.Information, message));
 	}
 
-	public void AddTrace(string message, object data, params object[] args)
+	public void AddInfo<T>(string message, T data) where T : class
 	{
+		if (!Logger.IsEnabled(LogLevel.Information)) return;
+
+		Messages.Add(new LogEvent(LogLevel.Information, message, data));
+	}
+
+	public void AddTrace(string message, params object[] args)
+	{
+		if (!Logger.IsEnabled(LogLevel.Trace)) return;
+
 		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Trace, message, data));
+		Messages.Add(new LogEvent(LogLevel.Trace, message));
 	}
 
-	public void AddError(string message, object data, params object[] args)
+	public void AddTrace<T>(string message, T data) where T : class
 	{
+		if (!Logger.IsEnabled(LogLevel.Trace)) return;
+
+		Messages.Add(new LogEvent(LogLevel.Trace, message, data));
+	}
+
+	public void AddError(string message, params object[] args)
+	{
+		if (!Logger.IsEnabled(LogLevel.Error)) return;
+
 		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Error, message, data));
+		Messages.Add(new LogEvent(LogLevel.Error, message));
 	}
 
-	public void AddFatal(string message, object data, params object[] args)
+	public void AddError<T>(string message, T data) where T : class
 	{
-		message = message.FormatString(args);
-		Messages.Add(new ApiError(LogLevel.Critical, message, data));
+		if (!Logger.IsEnabled(LogLevel.Error)) return;
+
+		Messages.Add(new LogEvent(LogLevel.Error, message, data));
 	}
 
-	public void LogAllMessages()
+	public void LogDebug(string message, params object[] args)
 	{
-		TransactionId = string.IsNullOrEmpty(TransactionId)
-			? Guid.NewGuid().ToString() : TransactionId;
+		Logger.LogDebug(message, args);
+	}
 
+	public void LogInfo(string message, params object[] args)
+	{
+		Logger.LogInformation(message, args);
+	}
+
+	public void LogTrace(string message, params object[] args)
+	{
+		Logger.LogTrace(message, args);
+	}
+
+	public void LogWarning(string message, params object[] args)
+	{
+		Logger.LogWarning(message, args);
+	}
+
+	public void LogError(Exception exception, string message, params object[] args)
+	{
+		Logger.LogError(exception, message, args);
+	}
+
+	public void LogFatal(Exception exception, string message, params object[] args)
+	{
+		Logger.LogCritical(exception, message, args);
+	}
+
+	public void SendAllLogEvents()
+	{
 		try
 		{
-			using (_logger.BeginScope(TransactionId))
+			using (Logger.BeginScope(TransactionId))
 			{
-				_logger.LogDebug("{TransactionId} | The logs writing is started for the transaction.", TransactionId);
+				Logger.LogDebug("{TransactionId} | The logs writing is started for the transaction.", TransactionId);
 
 				foreach (var message in Messages)
 				{
@@ -96,91 +165,20 @@ public class AppLogger<T> : IAppLogger<T> where T : class
 
 					if (string.IsNullOrEmpty(json))
 					{
-						_logger.Log(message.LogLevel, messageText, TransactionId);
+						Logger.Log(message.LogLevel, messageText, TransactionId);
 					}
 					else
 					{
-						_logger.Log(message.LogLevel, messageText, TransactionId, json);
+						Logger.Log(message.LogLevel, messageText, TransactionId, json);
 					}
 				}
 
-				_logger.LogDebug("{TransactionId} The logs writing is ended for the transaction.", TransactionId);
+				Logger.LogDebug("{TransactionId} The logs writing is ended for the transaction.", TransactionId);
 			}
 		}
 		catch (Exception)
 		{
 			throw;
 		}
-	}
-
-	/// <summary>
-	/// Log Debug message
-	/// </summary>
-	/// <param name="message">Debug message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogDebug(string message, params object[] args)
-	{
-		_logger.LogDebug(message, args);
-	}
-
-	/// <summary>
-	/// Log Information message
-	/// </summary>
-	/// <param name="message">Information message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogInfo(string message, params object[] args)
-	{
-		_logger.LogInformation(message, args);
-	}
-
-	/// <summary>
-	/// Log Trace message
-	/// </summary>
-	/// <param name="message">Trace message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogTrace(string message, params object[] args)
-	{
-		_logger.LogTrace(message, args);
-	}
-
-	/// <summary>
-	/// Log Warning message
-	/// </summary>
-	/// <param name="message">Warning message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogWarning(string message, params object[] args)
-	{
-		_logger.LogWarning(message, args);
-	}
-
-	/// <summary>
-	/// Log Error message
-	/// </summary>
-	/// <param name="message">Error message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogError(Exception exception, string message, params object[] args)
-	{
-		_logger.LogError(exception, message, args);
-	}
-
-	/// <summary>
-	/// Log Critical Error message with exception
-	/// </summary>
-	/// <param name="exception">Application Exception</param>
-	/// <param name="message">Error message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogFatal(Exception exception, string message, params object[] args)
-	{
-		_logger.LogCritical(exception, message, args);
-	}
-
-	/// <summary>
-	/// Log Critical Error message with exception
-	/// </summary>
-	/// <param name="message">Error message</param>
-	/// <param name="args">we can add multiple arguments to string formatter</param>
-	public void LogFatal(string message, params object[] args)
-	{
-		_logger.LogCritical(message, args);
 	}
 }

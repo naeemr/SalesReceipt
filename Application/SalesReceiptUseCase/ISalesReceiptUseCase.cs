@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Application.Sales;
 
-public interface IShoppingCart
+public interface ISalesReceiptUseCase
 {
 	Task<PrintReceipt> PrintReceipt(IEnumerable<CartItem> cartItems);
 }

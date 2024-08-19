@@ -24,7 +24,6 @@ public class ApplicationDbContext : DbContext
 	public DbSet<Receipt> Receipts { get; set; }
 	public DbSet<ReceiptItem> ReceiptItems { get; set; }
 	public DbSet<ProductCategory> ProductCategories { get; set; }
-	public DbSet<SalesTax> SalesTaxes { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

@@ -4,12 +4,7 @@ namespace Domain.Services;
 
 public class ReceiptService
 {
-	private readonly SalesTaxService _salesTaxService;
-
-	public ReceiptService(SalesTaxService salesTaxService)
-	{
-		_salesTaxService = salesTaxService;
-	}
+	public ReceiptService() { }
 
 	public Receipt GenerateReceipt(List<(Product, int)> productList, string number)
 	{
@@ -17,11 +12,11 @@ public class ReceiptService
 
 		foreach (var (product, quantity) in productList)
 		{
-			var itemTax = _salesTaxService.CalculateTotalTax(product);
+			var salexTax = product.CalculateTotalTax(10, 5);
 
-			var itemPrice = (product.Price + itemTax) * quantity;
+			var itemPrice = (product.Price + salexTax.Amount) * quantity;
 
-			receipt.AddReceiptItem(product, quantity, itemPrice, itemTax);
+			receipt.AddReceiptItem(product, quantity, itemPrice, salexTax);
 		}
 
 		return receipt;

@@ -3,16 +3,13 @@ using System.Collections.Generic;
 
 namespace Domain;
 
-public class ProductCategory : BaseEntity
+public class ProductCategory : BaseEntity, IAggregateRoot
 {
 	public string Name { get; private set; }
 	public bool IsTaxExempt { get; private set; } //true if product is exempted for sales tax, otherwise fals
 	public virtual ICollection<Product> Products { get; private set; }
 
-	private ProductCategory()
-	{
-
-	}
+	private ProductCategory() { }
 
 	public ProductCategory(string name, bool isTaxExempt)
 	{
@@ -21,12 +18,9 @@ public class ProductCategory : BaseEntity
 	}
 
 	/// <summary>
-	/// This will be auto-generated in the database, but it is included as a constructor parameter 
-	/// to facilitate the creation of in-memory data.
+	/// This will be auto-generated in the database, but it is included as a 
+	/// constructor parameter to facilitate the creation of in-memory data.
 	/// </summary>
-	/// <param name="id"></param>
-	/// <param name="name"></param>
-	/// <param name="isTaxExempt"></param>
 	public ProductCategory(int id, string name, bool isTaxExempt) : base(id)
 	{
 		Name = name;

@@ -13,10 +13,10 @@ public class ExceptionHandlingMiddleware
 	private readonly RequestDelegate _next;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IJsonHelper _jsonHelper;
-	private IAppLogger<ExceptionHandlingMiddleware> _logger;
+	private IAppLogger _logger;
 
 	public ExceptionHandlingMiddleware(RequestDelegate next,
-		IServiceProvider serviceProvider, 
+		IServiceProvider serviceProvider,
 		IJsonHelper jsonHelper)
 	{
 		_next = next;
@@ -28,7 +28,9 @@ public class ExceptionHandlingMiddleware
 	{
 		using (var scope = _serviceProvider.CreateScope())
 		{
-			_logger = scope.ServiceProvider.GetRequiredService<IAppLogger<ExceptionHandlingMiddleware>>();
+			_logger = scope.ServiceProvider.GetRequiredService<IAppLogger>();
+
+			_logger.CreateLogger<ExceptionHandlingMiddleware>();
 
 			try
 			{

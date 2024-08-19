@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Service.Middlewares;
 using System.Linq;
 
 namespace Service;
@@ -46,16 +45,19 @@ public class Startup
 	{
 		if (env.IsDevelopment())
 		{
-			//app.UseDeveloperExceptionPage();
+			app.UseDeveloperExceptionPage();
 
 			app.UseSwagger();
 			app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json",
 				"Services v1"));
 
 			CreateInMemoryDB(app);
+
+			var logger = NLog.LogManager.GetLogger("TestLogger");
+			logger.Info("NLog configuration loaded.");
 		}
 
-		app.UseMiddleware<ExceptionHandlingMiddleware>();
+		//app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 		//app.UseHttpsRedirection();
 		app.UseRouting();
@@ -72,8 +74,10 @@ public class Startup
 		});
 	}
 
-	private void LogAppConfiguration(IWebHostEnvironment env, IAppLogger<Startup> _loggrer)
+	private void LogAppConfiguration(IWebHostEnvironment env, IAppLogger _loggrer)
 	{
+		_loggrer.CreateLogger<Startup>();
+
 		var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
 			.AddJsonFile($"appsettings.{env.EnvironmentName}.json");
 

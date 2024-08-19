@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +17,20 @@ public class Program
 		var logger = LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
 		try
 		{
-			CreateHostBuilder(args).Build().Run();
+			var builder = WebApplication.CreateBuilder(args);
+
+			var startup = new Startup(builder.Configuration);
+			startup.ConfigureServices(builder.Services);
+
+			builder.Logging.ClearProviders();
+
+			builder.Host.UseNLog();
+
+			var app = builder.Build();
+
+			startup.Configure(app, builder.Environment);
+
+			app.Run();
 		}
 		catch (SqlException ex)
 		{

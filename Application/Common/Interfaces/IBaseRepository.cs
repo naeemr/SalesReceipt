@@ -17,6 +17,24 @@ namespace Application.Common.Interfaces
 		Task<TEntity> AddAsync(TEntity entity);
 
 		/// <summary>
+		/// update existing object
+		/// </summary>
+		/// <param name="entity">object that need to be updated</param>
+		Task<TEntity> UpdateAsync(TEntity entity);
+
+		/// <summary>
+		/// Remove object async
+		/// </summary>
+		/// <param name="entity">object that need to be removed</param>
+		Task DeleteAsync(TEntity entity);
+
+		/// <summary>
+		/// Remove more than one object
+		/// </summary>
+		/// <param name="entities">objects that need to be removed</param>
+		Task DeleteRangeAsync(IEnumerable<TEntity> entities);
+
+		/// <summary>
 		/// Update entity partially
 		/// </summary>
 		/// <typeparam name="TEntity">entity type</typeparam>
@@ -49,23 +67,5 @@ namespace Application.Common.Interfaces
 		/// <param name="id">primary key</param>
 		/// <returns></returns>
 		Task<TEntity> GetByIdAsync(int id);
-
-		/// <summary>
-		/// Remove object async
-		/// </summary>
-		/// <param name="entity">object that need to be removed</param>
-		Task DeleteAsync(TEntity entity);
-
-		/// <summary>
-		/// Remove more than one object
-		/// </summary>
-		/// <param name="entities">objects that need to be removed</param>
-		Task DeleteRangeAsync(IEnumerable<TEntity> entities);
-
-		/// <summary>
-		/// update existing object
-		/// </summary>
-		/// <param name="entity">object that need to be updated</param>
-		Task<TEntity> UpdateAsync(TEntity entity);
 	}
 }

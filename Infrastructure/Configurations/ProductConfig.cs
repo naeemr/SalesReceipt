@@ -10,6 +10,10 @@ public class ProductConfig : IEntityTypeConfiguration<Product>
 	{
 		builder.HasKey(p => new { p.Id });
 
+		builder.HasOne(x => x.ProductCategory)
+			.WithMany(x => x.Products)
+			.HasForeignKey(x => x.ProductCategoryId);
+
 		builder.ToTable("Product");
 
 		builder.Ignore(p => p.IsTaxExempt);

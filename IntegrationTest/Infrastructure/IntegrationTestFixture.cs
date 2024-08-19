@@ -6,29 +6,28 @@ using Service;
 using System;
 using System.Net.Http;
 
-namespace IntegrationTest.Infrastructure
+namespace IntegrationTest.Infrastructure;
+
+public class IntegrationTestFixture : IDisposable
 {
-	public class IntegrationTestFixture : IDisposable
+	public readonly ApplicationDbContext DbContext;
+	public readonly JsonHelper _jsonHelper;
+	private readonly WebApplicationFactory<Startup> _factory;
+
+	public IntegrationTestFixture()
 	{
-		public readonly ApplicationDbContext DbContext;
-		public readonly JsonHelper _jsonHelper;
-		private readonly WebApplicationFactory<Startup> _factory;
+		_factory = new CustomWebApplicationFactory<Startup>();
 
-		public IntegrationTestFixture()
-		{
-			_factory = new CustomWebApplicationFactory<Startup>();
+		DbContext = _factory.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
 
-			DbContext = _factory.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
-
-			_jsonHelper = _factory.Services.GetService(typeof(IJsonHelper)) as JsonHelper;
-		}
-
-		public void Dispose()
-		{
-			DbContext?.Dispose();
-			_factory.Dispose();
-		}
-
-		public HttpClient HttpClient => _factory.CreateClient();
+		_jsonHelper = _factory.Services.GetService(typeof(IJsonHelper)) as JsonHelper;
 	}
+
+	public void Dispose()
+	{
+		DbContext?.Dispose();
+		_factory.Dispose();
+	}
+
+	public HttpClient HttpClient => _factory.CreateClient();
 }

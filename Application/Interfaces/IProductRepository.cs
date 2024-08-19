@@ -3,10 +3,9 @@ using Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Application.Interfaces
+namespace Application.Interfaces;
+
+public interface IProductRepository : IBaseRepository<Product>
 {
-	public interface IProductRepository : IBaseRepository<Product>
-	{
-		public Task<IEnumerable<Product>> GetProducts(IEnumerable<int> productIds);
-	}
+	public Task<IEnumerable<Product>> GetProducts(IEnumerable<int> productIds);
 }

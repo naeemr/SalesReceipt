@@ -11,6 +11,5 @@ public class ProductCategoryConfig : IEntityTypeConfiguration<ProductCategory>
 		builder.HasKey(p => new { p.Id });
 
 		builder.ToTable("ProductCategory");
-
 	}
 }

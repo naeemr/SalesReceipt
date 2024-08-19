@@ -1,13 +1,12 @@
 ﻿using Domain.Base;
+using Domain.ValueObjects;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Domain;
 
 public partial class Receipt : BaseEntity, IAggregateRoot
 {
 	public string Number { get; private set; }
-
 	public virtual ICollection<ReceiptItem> ReceiptItems { get; private set; }
 
 	private Receipt()
@@ -20,9 +19,12 @@ public partial class Receipt : BaseEntity, IAggregateRoot
 		ReceiptItems = new List<ReceiptItem>();
 	}
 
-	public void AddReceiptItem(Product product, int quantity, decimal itemPrice, decimal taxAmount)
+	public void AddReceiptItem(Product product,
+		int quantity,
+		decimal itemPrice,
+		SalesTax salesTax)
 	{
-		var receiptItem = new ReceiptItem(product.Name, product.Id, quantity, itemPrice, taxAmount);
+		var receiptItem = new ReceiptItem(product.Name, product.Id, quantity, itemPrice, salesTax);
 		ReceiptItems.Add(receiptItem);
 	}
 }
