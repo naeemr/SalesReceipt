@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using Xunit;
 using static Domain.Product;
 
-namespace UnitTest.Domain;
+namespace UnitTest.Infrastructure;
 
 public class ProductRepositoryTest
 {
 	private ApplicationDbContext GetInMemoryDbContext()
 	{
 		var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-			.UseInMemoryDatabase(databaseName: "SalesDBForUnitTesting")
+			.UseInMemoryDatabase(databaseName: "SalesDBForInfrastructure")
 		.Options;
 
 		var dbContext = new ApplicationDbContext(options);
@@ -25,7 +25,7 @@ public class ProductRepositoryTest
 	}
 
 	[Fact]
-	public async Task GetProducts_ShouldReturnProducts_WhenProductIdsAreValid()
+	public async Task GetProducts_WhenProductIdsAreValid_ShouldReturnProducts()
 	{
 		// Arrange
 		var productIds = new List<int> { 1, 2, 3 };
@@ -60,7 +60,7 @@ public class ProductRepositoryTest
 	}
 
 	[Fact]
-	public async Task GetProducts_ShouldLogError_WhenExceptionIsThrown()
+	public async Task GetProducts_WhenExceptionIsThrown_ShouldLogError()
 	{
 		// Arrange
 		var productIds = new List<int> { 1, 2, 3 };
