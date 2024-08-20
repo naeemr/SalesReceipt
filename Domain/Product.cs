@@ -63,6 +63,8 @@ public partial class Product
 	/// integrity of your domain entities while ensuring your tests are effective. Given that 
 	/// Product class has a dependency on ProductCategory for determining if it's tax-exempt.
 	/// So, we used nested builder pattern to build product during writing unit tests.
+	/// We keep the access of Builder as Internal and set <InternalsVisibleTo Include="UnitTest" /> 
+	/// in Domain .csproj file to allow access only for UnitTest project
 	/// </summary>
 	internal class Builder
 	{
