@@ -11,25 +11,24 @@ public static class DataGenerator
 	public static void CreateData(this ApplicationDbContext context)
 	{
 		context.AddRange(
-				new ProductCategory(1, "Book", true),
-				new ProductCategory(2, "Food", true),
-				new ProductCategory(3, "Medical Products", true),
-				new ProductCategory(4, "Music CDs", false),
-				new ProductCategory(5, "Perfumes", false)
+				new ProductCategory("Book", true),
+				new ProductCategory("Food", true),
+				new ProductCategory("Medical Products", true),
+				new ProductCategory("Music CDs", false),
+				new ProductCategory("Perfumes", false)
 			);
-
 
 		context.AddRange(
 
-				new Product(1, "Book", "Book", 1, Convert.ToDecimal(12.49), false),
-				new Product(2, "Chocolate Bar", "chocolate bar", 2, Convert.ToDecimal(0.85), false),
-				new Product(3, "Imported Chocolates", "imported box of chocolates", 2, Convert.ToDecimal(10.00), true),
-				new Product(4, "Headache Pills", "packet of headache pills", 3, Convert.ToDecimal(9.75), false),
-				new Product(5, "Music CD", "Music CD", 4, Convert.ToDecimal(14.99), false),
-				new Product(6, "Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(47.50), true),
-				new Product(7, "Perfume", "bottle of perfume", 5, Convert.ToDecimal(18.99), false),
-				new Product(8, "Imported Chocolates", "box of imported chocolates", 2, Convert.ToDecimal(11.25), true),
-				new Product(9, "Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(27.99), true)
+				new Product("Book", "Book", 1, Convert.ToDecimal(12.49), false),
+				new Product("Chocolate Bar", "chocolate bar", 2, Convert.ToDecimal(0.85), false),
+				new Product("Imported Chocolates", "imported box of chocolates", 2, Convert.ToDecimal(10.00), true),
+				new Product("Headache Pills", "packet of headache pills", 3, Convert.ToDecimal(9.75), false),
+				new Product("Music CD", "Music CD", 4, Convert.ToDecimal(14.99), false),
+				new Product("Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(47.50), true),
+				new Product( "Perfume", "bottle of perfume", 5, Convert.ToDecimal(18.99), false),
+				new Product("Imported Chocolates", "box of imported chocolates", 2, Convert.ToDecimal(11.25), true),
+				new Product( "Imported Perfume", "imported bottle of perfume", 5, Convert.ToDecimal(27.99), true)
 			);
 
 		context.SaveChanges();

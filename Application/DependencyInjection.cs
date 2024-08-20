@@ -1,8 +1,9 @@
 ﻿using Application.Common;
 using Application.Common.Interfaces;
-using Application.Sales;
+using Application.SalesReceipt;
 using Domain.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Application;
 

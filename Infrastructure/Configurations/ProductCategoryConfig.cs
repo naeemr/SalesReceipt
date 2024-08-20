@@ -10,6 +10,8 @@ public class ProductCategoryConfig : IEntityTypeConfiguration<ProductCategory>
 	{
 		builder.HasKey(p => new { p.Id });
 
+		builder.HasMany(p => p.Products);
+
 		builder.ToTable("ProductCategory");
 	}
 }

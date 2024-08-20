@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Interfaces;
-using Application.Sales.Request;
-using Application.Sales.Response;
+using Application.SalesReceipt.Model;
 using Domain;
 using Domain.Services;
 using System;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Sales;
+namespace Application.SalesReceipt;
 
 public class SalesReceiptUseCase : ISalesReceiptUseCase
 {

@@ -1,6 +1,5 @@
 using Application.Common.Model;
-using Application.Sales.Request;
-using Application.Sales.Response;
+using Application.SalesReceipt.Model;
 using FluentAssertions;
 using IntegrationTest.Infrastructure;
 using System;
@@ -25,7 +24,7 @@ public class SalesReceiptTest : IntegrationTestBase
 	[Fact]
 	public async Task PrintReceipt_CartItems1_ReturnReceipt()
 	{
-		// Arrange     
+		//Arrange     
 		List<CartItem> items = new List<CartItem>()
 		{
 			new CartItem{ProductId =1, Quantity = 1},
@@ -55,7 +54,7 @@ public class SalesReceiptTest : IntegrationTestBase
 	[Fact]
 	public async Task PrintReceipt_CartItems2_ReturnReceipt()
 	{
-		// Arrange   
+		//Arrange   
 		List<CartItem> items = new List<CartItem>()
 		{
 			new CartItem{ProductId =3, Quantity = 1},
@@ -84,7 +83,7 @@ public class SalesReceiptTest : IntegrationTestBase
 	[Fact]
 	public async Task PrintReceipt_CartItems3_ReturnReceipt()
 	{
-		// Arrange     
+		//Arrange     
 		List<CartItem> items = new List<CartItem>()
 		{
 			new CartItem{ProductId =8,  Quantity = 1},

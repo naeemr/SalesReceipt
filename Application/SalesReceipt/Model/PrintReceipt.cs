@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Application.Sales.Response
+namespace Application.SalesReceipt.Model
 {
 	public class PrintReceipt
 	{

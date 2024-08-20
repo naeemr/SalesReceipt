@@ -24,15 +24,18 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
 	{
 		try
 		{
-			var products = await _context.Products.Include(p => p.ProductCategory)
-				.Where(p => productIds.Contains(p.Id)).AsNoTracking().ToListAsync();
+			var products = await _context.Products
+				.Include(p => p.ProductCategory)
+				.Where(p => productIds.Contains(p.Id))
+				.AsNoTracking()
+				.ToListAsync();
 
 			return products;
 		}
 		catch (Exception ex)
 		{
-			_appLogger.LogError(ex, string.Format("GetProducts: ProductIds are {0}",
-				string.Join(',', productIds.Select(s => s))));
+			_appLogger.LogError(ex, 
+				string.Format("GetProducts: ProductIds are {0}", string.Join(',', productIds.Select(s => s))));
 
 			throw;
 		}

@@ -1,7 +1,7 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Model;
-using Application.Sales;
-using Application.Sales.Request;
+using Application.SalesReceipt;
+using Application.SalesReceipt.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

@@ -10,7 +10,7 @@ public class SalesTax
 	public SalesTax(decimal taxRate, decimal amount)
 	{
 		if (taxRate < 0 || taxRate > 100)
-			throw new ArgumentException("Tax rate must be between 0 and 100.");
+			throw new ArgumentException("Tax rate must be between 0 and 100.", nameof(taxRate));
 
 		TaxRate = taxRate;
 		Amount = RoundUpToNearestFiveCents(amount);

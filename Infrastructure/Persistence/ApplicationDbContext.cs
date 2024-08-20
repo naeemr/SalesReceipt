@@ -40,7 +40,7 @@ public class ApplicationDbContext : DbContext
 	{
 		try
 		{
-			//SetAuditFields(ChangeTracker.Entries<IBaseEntity>());
+			SetAuditFields(ChangeTracker.Entries<IBaseEntity>());
 
 			var result = base.SaveChanges();
 
@@ -65,7 +65,7 @@ public class ApplicationDbContext : DbContext
 	{
 		try
 		{
-			//SetAuditFields(ChangeTracker.Entries<IBaseEntity>());
+			SetAuditFields(ChangeTracker.Entries<IBaseEntity>());
 
 			var result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
@@ -95,7 +95,7 @@ public class ApplicationDbContext : DbContext
 				{
 					case EntityState.Added:
 
-						//entry.Entity.SetAddedFields(_currentUserService.UserId);
+						entry.Entity.SetAddedFields(0);
 						break;
 
 					case EntityState.Modified:
@@ -103,7 +103,7 @@ public class ApplicationDbContext : DbContext
 						entry.Property(x => x.CreatedBy).IsModified = false;
 						entry.Property(x => x.CreatedOn).IsModified = false;
 
-						//entry.Entity.SetUpdatedFields(_currentUserService.UserId);
+						entry.Entity.SetUpdatedFields(0);
 						break;
 				}
 				//var validationContext = new ValidationContext(entry);

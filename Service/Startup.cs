@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Service;
 
@@ -29,7 +30,8 @@ public class Startup
 
 		services.AddPersistence();
 
-		services.AddControllers();
+		services.AddControllers().AddJsonOptions(options =>
+		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
 		services.AddSwaggerGen(c =>
 		{

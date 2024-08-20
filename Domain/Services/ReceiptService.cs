@@ -6,11 +6,13 @@ public class ReceiptService
 {
 	public ReceiptService() { }
 
-	public Receipt GenerateReceipt(List<(Product, int)> productList, string number)
+	public Receipt GenerateReceipt(List<(Product, int)> products, string number)
 	{
+		if (products == null || products.Count == 0) return default;
+
 		var receipt = new Receipt(number);
 
-		foreach (var (product, quantity) in productList)
+		foreach (var (product, quantity) in products)
 		{
 			var salexTax = product.CalculateTotalTax(10, 5);
 

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.9" />
+    <InternalsVisibleTo Include="UnitTest" />
   </ItemGroup>
 
 </Project>

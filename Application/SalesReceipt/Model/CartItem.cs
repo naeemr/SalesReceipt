@@ -1,4 +1,4 @@
-﻿namespace Application.Sales.Request;
+﻿namespace Application.SalesReceipt.Model;
 
 public class CartItem
 {

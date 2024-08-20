@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Domain;
 
-public partial class Receipt : BaseEntity, IAggregateRoot
+public class Receipt : BaseEntity, IAggregateRoot
 {
 	public string Number { get; private set; }
 	public virtual ICollection<ReceiptItem> ReceiptItems { get; private set; }
