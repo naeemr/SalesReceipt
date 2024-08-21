@@ -12,7 +12,7 @@ namespace Service.Controllers;
 public class ApiControllerBase : ControllerBase
 {
 	protected readonly IAppLogger _appLogger;
-	protected string TransactionId { get; set; }
+	protected string TransactionId { get; private set; }
 
 	public ApiControllerBase(IAppLogger appLogger)
 	{
@@ -21,42 +21,22 @@ public class ApiControllerBase : ControllerBase
 
 	protected IActionResult Success([ActionResultObjectValue] object value)
 	{
-		ApiResponse<object> response = new(value);
-
-		return base.Ok(response);
+		return base.Ok(ApiResponse<object>.Success(value));
 	}
 
 	protected IActionResult InvalidRequest([ActionResultObjectValue] object value)
 	{
-
-		ApiResponse<object> response = new();
-
 		if (IsList(value))
 		{
-			foreach (var error in (List<ApiError>)value)
-			{
-				response.AddError(error);
-			}
-
-			return base.BadRequest(response);
+			return base.BadRequest(ApiResponse<object>.Failure((List<ApiError>)value));
 		}
 
-		var apiError = (ApiError)value;
-
-		response.AddError(apiError);
-
-		return base.BadRequest(response);
+		return base.BadRequest(ApiResponse<object>.Failure((ApiError)value));
 	}
 
 	protected IActionResult ConcurrencyError([ActionResultObjectValue] object value)
 	{
-		ApiResponse<object> response = new();
-
-		var error = (ApiError)value;
-
-		response.AddError(error);
-
-		return base.Conflict(response);
+		return base.Conflict(ApiResponse<object>.Failure((ApiError)value));
 	}
 
 	protected void ReadHeaderValue()
