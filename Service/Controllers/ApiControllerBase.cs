@@ -9,12 +9,12 @@ namespace Service.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class ApiControllerBase : ControllerBase
+public class ApiControllerBase<T> : ControllerBase where T : class
 {
-	protected readonly IAppLogger _appLogger;
+	protected readonly IAppLogger<T> _appLogger;
 	protected string TransactionId { get; private set; }
 
-	public ApiControllerBase(IAppLogger appLogger)
+	public ApiControllerBase(IAppLogger<T> appLogger)
 	{
 		_appLogger = appLogger;
 	}

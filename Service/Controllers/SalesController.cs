@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Service.Controllers;
 
-public class SalesController : ApiControllerBase
+public class SalesController : ApiControllerBase<SalesController>
 {
 	private readonly ISalesReceiptUseCase _salesReceipt;
 
 	public SalesController(ISalesReceiptUseCase salesReceipt,
-		IAppLogger appLogger) : base(appLogger)
+		IAppLogger<SalesController> appLogger) : base(appLogger)
 	{
 		_salesReceipt = salesReceipt;
 	}
@@ -27,17 +27,14 @@ public class SalesController : ApiControllerBase
 	{
 		ReadHeaderValue();
 
-		_appLogger.CreateLogger<SalesReceiptUseCase>(TransactionId);
-
-		_appLogger.AddInfo("Receipt printing is started.");
+		_appLogger.LogInfo("Receipt printing is started.");
 
 		if (cartItems == null || cartItems.Count() == 0)
 		{
 			var message = "Cart Item list is empty.";
 
-			_appLogger.AddWarning(message);
-			_appLogger.AddInfo("Receipt printing is completed.");
-			_appLogger.SendAllLogEvents();
+			_appLogger.LogWarning(message);
+			_appLogger.LogInfo("Receipt printing is completed.");
 
 			return InvalidRequest(new ApiError(StatusCodes.Status400BadRequest.ToString(), message));
 		}
@@ -48,18 +45,15 @@ public class SalesController : ApiControllerBase
 		{
 			var message = "Receipt is not generated.";
 
-			_appLogger.AddWarning(message);
-			_appLogger.AddInfo("Receipt printing is completed.");
-			_appLogger.SendAllLogEvents();
+			_appLogger.LogWarning(message);
+			_appLogger.LogInfo("Receipt printing is completed.");
 
 			return InvalidRequest(new ApiError(StatusCodes.Status400BadRequest.ToString(), message));
 		}
 
-		_appLogger.AddTrace("Receipt is {JsonData}", receipt);
+		_appLogger.LogTrace("Receipt is {JsonData}", receipt);
 
-		_appLogger.AddInfo("Receipt printing is completed.");
-
-		_appLogger.SendAllLogEvents();
+		_appLogger.LogInfo("Receipt printing is completed.");
 
 		return Success(receipt);
 	}

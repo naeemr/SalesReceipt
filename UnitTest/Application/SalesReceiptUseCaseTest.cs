@@ -65,8 +65,9 @@ public class SalesReceiptUseCaseTest
 			dbContext.Products.AddRange(products);
 			await dbContext.SaveChangesAsync();
 
-			var mockAppLogger = new Mock<IAppLogger>();
-			var repository = new ProductRepository(dbContext, mockAppLogger.Object);
+			var mockRepoLogger = new Mock<IAppLogger<ProductRepository>>();
+			var mockAppLogger = new Mock<IAppLogger<SalesReceiptUseCase>>();
+			var repository = new ProductRepository(dbContext, mockRepoLogger.Object);
 
 			var receiptService = new ReceiptService();
 
@@ -111,8 +112,9 @@ public class SalesReceiptUseCaseTest
 			dbContext.Products.AddRange(products);
 			await dbContext.SaveChangesAsync();
 
-			var mockAppLogger = new Mock<IAppLogger>();
-			var repository = new ProductRepository(dbContext, mockAppLogger.Object);
+			var mockRepoLogger = new Mock<IAppLogger<ProductRepository>>();
+			var mockAppLogger = new Mock<IAppLogger<SalesReceiptUseCase>>();
+			var repository = new ProductRepository(dbContext, mockRepoLogger.Object);
 
 			var receiptService = new ReceiptService();
 
@@ -165,8 +167,9 @@ public class SalesReceiptUseCaseTest
 			dbContext.Products.AddRange(products);
 			await dbContext.SaveChangesAsync();
 
-			var mockAppLogger = new Mock<IAppLogger>();
-			var repository = new ProductRepository(dbContext, mockAppLogger.Object);
+			var mockRepoLogger = new Mock<IAppLogger<ProductRepository>>();
+			var mockAppLogger = new Mock<IAppLogger<SalesReceiptUseCase>>();
+			var repository = new ProductRepository(dbContext, mockRepoLogger.Object);
 
 			var receiptService = new ReceiptService();
 

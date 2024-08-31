@@ -1,5 +1,4 @@
-﻿using Application.Common.Interfaces;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
@@ -7,9 +6,9 @@ using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Application.Common;
+namespace Infrastructure;
 
-public class JsonHelper : IJsonHelper
+public class JsonHelper
 {
 	private readonly JsonSerializerSettings _defaultSettings
 		= new()

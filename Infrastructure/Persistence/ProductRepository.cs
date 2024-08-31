@@ -12,10 +12,10 @@ namespace Infrastructure.Persistence;
 
 public class ProductRepository : BaseRepository<Product>, IProductRepository
 {
-	private readonly IAppLogger _appLogger;
+	private readonly IAppLogger<ProductRepository> _appLogger;
 
 	public ProductRepository(ApplicationDbContext dbContext,
-		IAppLogger appLogger) : base(dbContext)
+		IAppLogger<ProductRepository> appLogger) : base(dbContext)
 	{
 		_appLogger = appLogger;
 	}

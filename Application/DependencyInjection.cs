@@ -13,8 +13,7 @@ public static class DependencyInjection
 	{
 		services.AddScoped<ISalesReceiptUseCase, SalesReceiptUseCase>();
 		services.AddScoped<ReceiptService>();
-		services.AddSingleton<IJsonHelper, JsonHelper>();
-
+		
 		return services;
 	}
 }

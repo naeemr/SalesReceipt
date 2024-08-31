@@ -14,11 +14,11 @@ public class SalesReceiptUseCase : ISalesReceiptUseCase
 {
 	private readonly IProductRepository _productRepository;
 	private readonly ReceiptService _receiptService;
-	private readonly IAppLogger _appLogger;
+	private readonly IAppLogger<SalesReceiptUseCase> _appLogger;
 
 	public SalesReceiptUseCase(IProductRepository productRepository,
 		ReceiptService receiptService,
-		IAppLogger appLogger)
+		IAppLogger<SalesReceiptUseCase> appLogger)
 	{
 		_productRepository = productRepository;
 		_receiptService = receiptService;
@@ -29,13 +29,13 @@ public class SalesReceiptUseCase : ISalesReceiptUseCase
 	{
 		var productIds = cartItems.Select(p => p.ProductId).Distinct().ToList();
 
-		_appLogger.AddTrace(string.Format("ProductIds are {0}", string.Join(',', productIds.Select(s => s))));
+		_appLogger.LogTrace(string.Format("ProductIds are {0}", string.Join(',', productIds.Select(s => s))));
 
 		try
 		{
 			var products = await _productRepository.GetProducts(productIds);
 
-			_appLogger.AddInfo(string.Format("Total Product found {0}", products?.Count()));
+			_appLogger.LogInfo(string.Format("Total Product found {0}", products?.Count()));
 
 			List<(Product, int)> productList = new List<(Product, int)>();
 

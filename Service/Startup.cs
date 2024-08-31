@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Service.Middlewares;
 using System.Linq;
 using System.Text.Json.Serialization;
 
@@ -59,7 +60,8 @@ public class Startup
 			logger.Info("NLog configuration loaded.");
 		}
 
-		//app.UseMiddleware<ExceptionHandlingMiddleware>();
+		app.UseMiddleware<ExceptionHandlingMiddleware>();
+		app.UseMiddleware<CorrelationIdMiddleware>();
 
 		//app.UseHttpsRedirection();
 		app.UseRouting();
@@ -76,10 +78,8 @@ public class Startup
 		});
 	}
 
-	private void LogAppConfiguration(IWebHostEnvironment env, IAppLogger _loggrer)
+	private void LogAppConfiguration(IWebHostEnvironment env, IAppLogger<Startup> _loggrer)
 	{
-		_loggrer.CreateLogger<Startup>();
-
 		var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
 			.AddJsonFile($"appsettings.{env.EnvironmentName}.json");
 

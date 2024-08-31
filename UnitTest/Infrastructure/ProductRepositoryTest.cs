@@ -43,7 +43,7 @@ public class ProductRepositoryTest
 				product.ProductCategory.RemoveCyclicReference();
 			}
 
-			var mockAppLogger = new Mock<IAppLogger>();
+			var mockAppLogger = new Mock<IAppLogger<ProductRepository>>();
 			var repository = new ProductRepository(dbContext, mockAppLogger.Object);
 
 			// Act
@@ -66,7 +66,7 @@ public class ProductRepositoryTest
 		var productIds = new List<int> { 1, 2, 3 };
 		var dbContext = GetInMemoryDbContext();
 
-		var mockLogger = new Mock<IAppLogger>();
+		var mockLogger = new Mock<IAppLogger<ProductRepository>>();
 
 		// Simulate an error by disposing the context before querying
 		var products = BuildProducts();

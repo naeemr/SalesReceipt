@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces;
+﻿using Application.Common;
+using Application.Common.Interfaces;
 using Application.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,9 @@ public static class DependencyInjection
 {
 	public static IServiceCollection AddInfrastructure(this IServiceCollection services)
 	{
-		services.AddScoped<IAppLogger, AppLogger>();
+		services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));
+
+		services.AddSingleton<JsonHelper>();
 
 		return services;
 	}

@@ -1,5 +1,5 @@
-using Application.Common;
 using Application.Common.Interfaces;
+using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Service;
@@ -20,7 +20,7 @@ public class IntegrationTestFixture : IDisposable
 
 		DbContext = _factory.Services.GetService(typeof(ApplicationDbContext)) as ApplicationDbContext;
 
-		_jsonHelper = _factory.Services.GetService(typeof(IJsonHelper)) as JsonHelper;
+		_jsonHelper = _factory.Services.GetService(typeof(JsonHelper)) as JsonHelper;
 	}
 
 	public void Dispose()
