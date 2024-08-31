@@ -10,6 +10,11 @@ public class ApiResponse<T>
 	public T Result { get; private set; }
 	public List<ApiError> Errors { get; private set; }
 
+	private ApiResponse()
+	{
+
+	}
+
 	private ApiResponse(T result, int id)
 	{
 		Id = id;

@@ -34,8 +34,9 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
 		}
 		catch (Exception ex)
 		{
-			_appLogger.LogError(ex, 
-				string.Format("GetProducts: ProductIds are {0}", string.Join(',', productIds.Select(s => s))));
+			var message = string.Format("GetProducts: ProductIds are {0}", string.Join(',', productIds.Select(s => s)));
+			
+			_appLogger.LogError(ex, message);
 
 			throw;
 		}

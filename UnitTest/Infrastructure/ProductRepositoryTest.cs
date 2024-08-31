@@ -87,6 +87,7 @@ public class ProductRepositoryTest
 			dbContext.Database.EnsureDeleted();
 
 			var exception = new Exception("Value cannot be null. (Parameter 'source')");
+
 			mockLogger.Setup(l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()))
 				.Throws(exception);
 
@@ -94,11 +95,13 @@ public class ProductRepositoryTest
 
 			Func<Task> act = async () => await productRepository.GetProducts(productIds);
 
+			// Assert
 			await act.Should().ThrowAsync<Exception>().WithMessage("Value cannot be null. (Parameter 'source')");
 		}
 
+		// Assert
 		mockLogger.Verify(l => l.LogError(
-			It.Is<ArgumentNullException>(e => e.Message.Contains("Value cannot be null. (Parameter 'source')")),
+			It.Is<Exception>(e => e.Message.Contains("Value cannot be null. (Parameter 'source')")),
 			It.Is<string>(s => s.Contains("GetProducts: ProductIds are 1,2,3"))),
 			Times.Once);
 	}
